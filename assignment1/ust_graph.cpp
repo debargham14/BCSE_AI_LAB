@@ -129,7 +129,45 @@ void printPaths(map<int, vector<int> > paths)
 			}
 			cout << "\n";
 		}
+		else
+		{
+			cout << itr.first << " -> Goal could not be reached\n";
+		}
 	}
+}
+//method to perform ids;
+void ids()
+{
+
+	map<int, vector<int> > paths;
+	vector<int> path;
+	int start, max_depth;
+
+	initialiseUtilityTools(start, paths, path);
+	cout << "Enter max depth --> ";
+	cin >> max_depth;
+
+	auto checkIfAllGoalsReached = [&](vector<bool> &temp) -> bool
+	{
+		for (auto itr : paths)
+		{
+			if (!temp[itr.first])
+				return false;
+		}
+		return true;
+	};
+	//performing the search operation
+	vector<bool> temp(vertices + 1, false);
+	for (int depth = 0; depth <= max_depth; depth++)
+	{
+		if (!checkIfAllGoalsReached(temp))
+		{
+			vis.assign(vertices + 1, false);
+			dls(start, paths, path, 0, depth);
+			temp = vis;
+		}
+	}
+	printPaths(paths);
 }
 //utility function to perform the search operation depending on the technique passed as argument
 void utilityDFS_BFS(function<void(int, map<int, vector<int> > &, vector<int> &)> searchFunction)
@@ -183,8 +221,13 @@ int main()
 			vis.assign(vertices + 1, false);
 			dls(start, paths, path, 0, depth_limit);
 			printPaths(paths);
+			break;
 		}
-
+		case 5:
+		{
+			ids();
+			break;
+		}
 		default:
 			exit(0);
 			break;
