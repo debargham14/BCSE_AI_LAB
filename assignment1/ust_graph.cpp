@@ -11,12 +11,15 @@ vector<vector<int> > graph;
 vector<bool> vis;
 int vertices, edges;
 
+vector<int> order;
+
 //method to perform dfs
 void dfs(int node, map<int, vector<int> > &paths, vector<int> &path)
 {
 	if (!vis[node])
 	{
 		vis[node] = true;
+		order.push_back(node);
 		path.push_back(node);
 		if (paths.find(node) != paths.end())
 		{
@@ -42,6 +45,7 @@ void bfs(int start, map<int, vector<int> > &paths, vector<int> path)
 	while (!q.empty())
 	{
 		int node = q.front();
+		order.push_back(node);
 		q.pop();
 		for (auto child : graph[node])
 		{
@@ -64,12 +68,57 @@ void bfs(int start, map<int, vector<int> > &paths, vector<int> path)
 		reverse(paths[itr.first].begin(), paths[itr.first].end());
 	}
 }
+
+//method to implement ibs
+void ibs(int start, map<int, vector<int> > &paths, vector<int> &path)
+{
+	int limit;
+	cout << "Enter the ibs limit --> ";
+	cin >> limit;
+
+	queue<int> q;
+	unordered_map<int, int> par;
+	par[start] = -1;
+	q.push(start);
+	vis[start] = true;
+
+	while (!q.empty())
+	{
+		int node = q.front();
+		order.push_back(node);
+		q.pop();
+		for (int it = 0; it <= min(limit - 1, (int)graph[node].size() - 1); ++it)
+		{
+			int child = graph[node][it];
+			if (!vis[child])
+			{
+				vis[child] = true;
+				par[child] = node;
+				q.push(child);
+			}
+		}
+	}
+	for (auto itr : paths)
+	{
+		if (vis[itr.first])
+		{
+			int parent = itr.first;
+			while (parent != -1)
+			{
+				paths[itr.first].push_back(parent);
+				parent = par[parent];
+			}
+			reverse(paths[itr.first].begin(), paths[itr.first].end());
+		}
+	}
+}
 //method to perform depth limited search
 void dls(int node, map<int, vector<int> > &paths, vector<int> &path, int curr_depth, int depth_limit)
 {
 	if (!vis[node] && curr_depth < depth_limit)
 	{
 		vis[node] = true;
+		order.push_back(node);
 		path.push_back(node);
 		if (paths.find(node) != paths.end())
 		{
@@ -170,7 +219,7 @@ void ids()
 	printPaths(paths);
 }
 //utility function to perform the search operation depending on the technique passed as argument
-void utilityDFS_BFS(function<void(int, map<int, vector<int> > &, vector<int> &)> searchFunction)
+void utilityDFS_BFS_IBS(function<void(int, map<int, vector<int> > &, vector<int> &)> searchFunction)
 {
 	map<int, vector<int> > paths;
 	vector<int> path;
@@ -183,6 +232,13 @@ void utilityDFS_BFS(function<void(int, map<int, vector<int> > &, vector<int> &)>
 	printPaths(paths);
 }
 
+void printOrder()
+{
+	cout << "Order --> ";
+	for (auto node : order)
+		cout << node << " ";
+	cout << endl;
+}
 //driver function to do the same
 int main()
 {
@@ -199,12 +255,16 @@ int main()
 			break;
 		case 2:
 		{
-			utilityDFS_BFS(&dfs);
+			order.clear();
+			utilityDFS_BFS_IBS(&dfs);
+			printOrder();
 			break;
 		}
 		case 3:
 		{
-			utilityDFS_BFS(&bfs);
+			order.clear();
+			utilityDFS_BFS_IBS(&bfs);
+			printOrder();
 			break;
 		}
 		case 4:
@@ -219,13 +279,22 @@ int main()
 			cout << "Enter the depth limit --> ";
 			cin >> depth_limit;
 			vis.assign(vertices + 1, false);
+			order.clear();
 			dls(start, paths, path, 0, depth_limit);
 			printPaths(paths);
+			printOrder();
 			break;
 		}
 		case 5:
 		{
 			ids();
+			break;
+		}
+		case 6:
+		{
+			order.clear();
+			utilityDFS_BFS_IBS(&ibs);
+			printOrder();
 			break;
 		}
 		default:
