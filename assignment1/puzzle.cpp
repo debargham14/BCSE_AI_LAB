@@ -2,6 +2,7 @@
     the following code will test the different unirformed search techniques 
     against the classic knights tour problem (Given a source cell check whether
     the knight can reach a particular target cell or not) along with some obstacles
+    0 -> obstacle, the start cell cannot be obstacle
 */
 
 #include <iostream>
