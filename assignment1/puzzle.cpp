@@ -30,6 +30,11 @@ bool canGo(int x, int y)
 
 vector<pair<int, int> > dir = {{1, 2}, {-1, 2}, {1, -2}, {-1, -2}, {2, 1}, {-2, -1}, {-2, 1}, {2, -1}};
 
+//added a test function to test a git functionality
+void testFunction () {
+    cout << "Hello World !";
+}
+
 void getPathUsingDFS(int start_x, int start_y, int target_x, int target_y, vector<pair<int, int> > &path, vector<pair<int, int> > &temp_path, vector<vector<bool> > &vis)
 {
     if (!vis[start_x][start_y])
